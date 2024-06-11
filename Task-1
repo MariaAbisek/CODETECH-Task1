@@ -1,0 +1,151 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+sdata=pd.read_csv(r"C:\Users\maria\Downloads\retail_data.csv")
+sdata.head()
+sdata.describe()
+sdata.info()
+sdata.isnull().sum()
+sdata.shape
+sdata.columns
+sdata.nunique()
+numerical_data=sdata.select_dtypes(exclude=['object']).columns
+print("Numerical_data",numerical_data)
+categorical_data=sdata.select_dtypes(include=['object']).columns
+print("Categorical_data",categorical_data)
+sdata['Date']=pd.to_datetime(sdata['Date'])
+sdata['Month']=sdata['Date'].dt.month_name()
+sdata['Month']
+sdata=sdata[sdata['Total Amount']>=sdata['Price per Unit']]
+plt.figure(figsize=(10,5))
+sns.lineplot(x='Month',y='Total Amount',color='Black',data=sdata) 
+plt.title("Trend over time",fontsize=10) 
+plt.xlabel('Month',fontsize=8)
+plt.ylabel('Total sales amount per month',fontsize=8)
+plt.show()
+sdata['Month']=sdata['Date'].dt.month
+transaction_count=sdata.groupby('Month')['Transaction ID'].count()
+plt.figure(figsize=(10,5))
+sns.lineplot(x=transaction_count.index,y=transaction_count.values,color='green')
+plt.title("Transaction frequency over months",fontsize=10)
+plt.xlabel('Month',fontsize=8)
+plt.ylabel('Transaction ID',fontsize=8)
+plt.show()
+plt.figure(figsize=(15,10))
+sns.barplot(x=transaction_count.index,y=transaction_count.values)
+plt.title("Transaction frequency over months",fontsize=10)
+plt.xlabel('Month',fontsize=8)
+plt.ylabel('Transaction ID',fontsize=8)
+plt.show()
+heatmap=sdata.pivot_table(index='Month',columns='Product Category',values='Total Amount')
+plt.figure(figsize=(15,10))
+sns.heatmap(heatmap, annot=True,fmt='.0f')
+plt.title("sales Heatmap",fontsize=15)
+plt.xlabel('Product Category',fontsize=15)
+plt.ylabel('Month',fontsize=15)
+plt.show()
+Age_bins=[0,18,25,35,50,100]
+Age_group=['0-18','19-25','26-35','36-50','51+']
+sdata['Age group']=pd.cut(sdata['Age'],bins=Age_bins,labels=Age_group)
+sdata.head()
+plt.figure(figsize=(9,5))
+sns.barplot(x='Age group',y='Quantity',hue='Product Category',color='yellow',data=sdata)
+plt.title("Product Category purchased by age group",fontsize=10)
+plt.xlabel('Age Group',fontsize=8)
+plt.ylabel('Quantity',fontsize=8)
+plt.show()
+plt.figure(figsize=(8,6))
+sns.swarmplot(x='Product Category',y='Age',hue='Gender',data=sdata,palette='Set2')
+plt.title('Distribution of age and gender across Product Category',fontsize=13)
+plt.xlabel('Product Category',fontsize=14)
+plt.ylabel('Age',fontsize=14)
+plt.legend(title='Gender',loc='upper right',fontsize=8)
+plt.show()
+monthly_totals = sdata.groupby('Month')['Total Amount'].sum().reset_index()
+print(monthly_totals)
+monthly_totals = sdata.groupby('Month')['Total Amount'].sum().reset_index()
+plt.figure(figsize=(12, 8))
+sns.lineplot(x='Month', y='Total Amount', data=monthly_totals, color='brown', linewidth=1)
+plt.title('Revenue over the year')
+plt.xlabel('')
+plt.ylabel('Revenue')
+for i, total in enumerate(monthly_totals['Total Amount']):
+    plt.text(i, total, f"{total:.2f}", va='bottom', ha='center', color='black', fontsize=10)
+plt.xticks(rotation=45, ha='right')
+plt.show()
+sdata.columns
+sdata_1=sdata[['Gender', 'Age','Product Category', 'Quantity','Price per Unit', 'Total Amount']]
+plt.figure(figsize=(20,16))
+fig,axs=plt.subplots(1,3,figsize=(18,3))
+axs[0].hist(sdata_1['Quantity'],bins=20,color="violet",edgecolor='Red',alpha=0.7)
+axs[0].set_title('Histogram of Quantity',fontsize=12)
+axs[0].set_xlabel('Quantity',fontsize=10)
+axs[0].set_ylabel('Frequency',fontsize=10)
+axs[1].hist(sdata_1['Price per Unit'],bins=20,color="violet",edgecolor='Red',alpha=0.7)
+axs[1].set_title('Histogram of Price per Unit ',fontsize=12)
+axs[1].set_xlabel('Price per Unit',fontsize=10)
+axs[1].set_ylabel('Frequency',fontsize=10)
+axs[2].hist(sdata_1['Total Amount'],bins=20,color="violet",edgecolor='Red',alpha=0.7)
+axs[2].set_title('Histogram of total Amount',fontsize=12)
+axs[2].set_xlabel('Total Amoun',fontsize=10)
+axs[2].set_ylabel('Frequency',fontsize=10)
+plt.suptitle('Histogram of all continuous variables',fontsize=15)
+plt.tight_layout()
+plt.show()
+gender_counts=sdata['Gender'].value_counts()
+plt.figure(figsize=(7,4))
+sns.barplot(x=gender_counts.index,y=gender_counts.values,palette=['Pink','Skyblue'])
+plt.title('Frequency of gender',fontsize=13)
+plt.xlabel('Gender',fontsize=10,fontweight='bold')
+plt.ylabel('count',fontsize=10,fontweight='bold')
+gender_counts=sdata['Gender'].value_counts()
+gender_dist=(gender_counts/gender_counts.sum())*100
+gender_dist=gender_dist.reset_index()
+gender_dist.columns=['Gender','Percentage']
+plt.figure(figsize=(5,3))
+plt.pie(gender_dist['Percentage'],labels=gender_dist['Gender'],autopct='%.0f%%',colors=['lightgreen','yellow'])
+plt.title('Gender distribution percentage',fontsize=14,fontweight='bold')
+plt.show()
+cat_count=sdata['Product Category'].value_counts()
+cat_count
+cat_dist=(cat_count/cat_count.sum())
+cat_dist=cat_dist.reset_index()
+cat_dist.columns=['Product Category','Percentage']
+cat_dist
+cat_count=sdata['Product Category'].value_counts()
+cat_dist=(cat_count/cat_count.sum())*100
+cat_dist=cat_dist.reset_index()
+cat_dist.columns=['Product Category','Percentage']
+plt.figure(figsize=(6,4))
+plt.pie(cat_dist['Percentage'],labels=cat_dist['Product Category'],
+        autopct='%.0f%%',colors=['lightblue','lightpink','lightyellow'])
+plt.title('Gender distribution percentage',fontsize=14,fontweight='bold')
+plt.show()
+plt.figure(figsize=(6,3))
+sns.lineplot(x='Product Category',y='Total Amount',hue='Gender',data=sdata)
+plt.title('Total revenue by product category')
+plt.xlabel('')
+plt.ylabel('Total revenue')
+plt.yscale('symlog')
+plt.tight_layout()
+for p in plt.gca().patches:
+    plt.gca().annotate(format(p.get_height(),","),
+                             (p.get_x()+p.get_width/2.,p.get_height()),
+                       ha='center',va='center',xytext=(0,10),
+                       textcoords='offset points',fontsize=10,fontweight='bold' )
+plt.show()
+plt.figure(figsize=(10,6))
+sns.boxplot(x='Product Category',y= 'Total Amount',hue='Gender',
+            data=sdata,color='lightpink')
+plt.title('Amount spent per transaction')
+plt.xlabel("")
+plt.ylabel('Total revenue')
+plt.legend(loc='upper right')
+plt.show()
+sdata.info()
+correlation=sdata[sdata.dtypes[sdata.dtypes=='int64'].index].corr()
+sns.set(font_scale=.5)
+plt.figure(figsize=(5,2))
+plt.title("Heatmap",fontsize=10)
+ax=sns.heatmap(correlation,annot=True,annot_kws={'size':12},fmt='.1f',linewidths=.5)
