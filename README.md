@@ -1,9 +1,9 @@
-Name: M. Maria Glefri
-Company: CODETECH IT SOLUTIONS
+Name:M.Maria Glefri
+Company:CODETECH IT SOLUTIONS
 ID:CT12DS372
-Domain: Data Analytics
+Domain:Data Analytics
 Duration:May to June 2024
-Mentor: Sravani 
+Mentor:Sravani 
 
 OVERVIEW:
 
